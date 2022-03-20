@@ -1,0 +1,44 @@
+# docker-compose version
+version: "3.6"
+
+volumes:
+  postgres-volume:
+
+networks:
+  postgres:
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgresdb
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mydb
+    networks:
+      - postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+      # copy the sql script to create tables
+      # - ./prisma/migrations/20220320011333_init/migration.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  client:
+    stdin_open: true # needed to allow react-scripts to watch for changes
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    networks:
+      - postgres
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/mydb"

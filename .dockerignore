@@ -1,0 +1,14 @@
+*
+!components/
+!generated/
+!lib/
+!pages/
+!package.json
+!*.js
+!package-lock.json
+!next-end.d.ts
+!nexus.tsconfig.json
+!yarn.lock
+!.env
+!.env.*
+!prisma
